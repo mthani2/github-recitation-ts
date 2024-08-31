@@ -1,18 +1,26 @@
 // Endpoint for querying the fibonacci numbers
-const fibonacci = require("./fib");
+import { Request, Response } from 'express';
+import { textSpanContainsPosition } from 'typescript';
+import { fibonacci } from './fib';
+//import { fibonacci } from './src/fib';
 
-export default (req, res) => {
-  const { num } = req.params;
-  const parsedNum = parseInt(num);
 
-  // Handle invalid or negative inputs
-  if (isNaN(parsedNum) || parsedNum < 0) {
-    res.status(400).send(`Error: Invalid input. Fibonacci numbers are defined for non-negative integers.`);
+export default (req: Request, res: Response): void => {
+  const numStr = req.params.num;
+  const num = parseInt(numStr, 10);
+
+  if (isNaN(num)) {
+    res.status(400).send('Invalid number');
     return;
   }
 
-  const fibN = fibonacci(parsedNum);
-  const result = `fibonacci(${parsedNum}) is ${fibN}`;
+  const fibN = fibonacci(num);
+  let result = `fibonacci(${num}) is ${fibN}`;
+
+  if (fibN < 0) {
+    result = `fibonacci(${num}) is undefined`;
+  }
 
   res.send(result);
 };
+
